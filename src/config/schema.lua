@@ -99,7 +99,11 @@ local definitions = {
   {name = "sponsorblock_multicolored_segments", default = true,
     group = "sponsorblock"},
   {name = "sponsorblock_show_submit", default = true, group = "sponsorblock"},
-  {name = "sponsorblock_show_voting", default = true, group = "sponsorblock"}
+  {name = "sponsorblock_show_voting", default = true, group = "sponsorblock"},
+
+  -- ModernZ-style additions
+  {name = "drag_border", default = 16, group = "modernz",
+    normalize = number({default = 16, min = 0})},
 }
 
 local by_name = {}
