@@ -144,7 +144,10 @@ mp.add_hook("on_load", 5, function()
 end)
 
 mp.set_property("osc", "no")
-mp.set_property_bool("auto-window-resize", false)
+-- auto keeps mpv.conf's auto-window-resize (upstream forced it off)
+if opts.auto_window_resize ~= "auto" then
+  mp.set_property("auto-window-resize", opts.auto_window_resize)
+end
 
 local controls_module = require "src.ui.components.controls"
 local empty_state_module = require "src.ui.components.empty_state"
@@ -1299,6 +1302,9 @@ options_update_handler = function(changed)
     changed.seeking_zone_percentage or changed.seek_step_seconds or
     changed.max_volume_percentage then
     recreate_app()
+  end
+  if changed.auto_window_resize and opts.auto_window_resize ~= "auto" then
+    mp.set_property("auto-window-resize", opts.auto_window_resize)
   end
   if changed.show_on_mouse_move then
     if opts.show_on_mouse_move then controller:show()

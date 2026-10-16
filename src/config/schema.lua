@@ -104,6 +104,8 @@ local definitions = {
   -- ModernZ-style additions
   {name = "drag_border", default = 16, group = "modernz",
     normalize = number({default = 16, min = 0})},
+  {name = "auto_window_resize", default = "auto", group = "modernz",
+    normalize = enum("auto", {"auto", "yes", "no"})}
 }
 
 local by_name = {}
