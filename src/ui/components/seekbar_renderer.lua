@@ -10,8 +10,17 @@ function seekbar_renderer.new(deps)
   local enqueue_effect, thumbnail_service = deps.enqueue_effect, deps.thumbnail_service
   local sponsorblock_category_style = deps.sponsorblock_category_style
   local sponsorblock_should_render = deps.sponsorblock_should_render
+  -- ModernZ two-tone seekbar: remaining track and cache ranges
+  local function ass_alpha(value, fallback)
+    return string.format("%02X",
+      math.max(0, math.min(255, math.floor(tonumber(value) or fallback))))
+  end
 
   local function draw_seekbar(ass, x1, y, x2)
+    local track_color = opts.seekbarbg_color or "#282828"
+    local track_alpha = ass_alpha(opts.seekbarbg_alpha, 0x99)
+    local cache_color = opts.seekbar_cache_color or "#b1b1b1"
+    local cache_alpha = ass_alpha(opts.seekrange_alpha, 0x66)
     runtime.seek.preview_bounds = nil
     runtime.seek.position_pill_visible = false
     local duration = runtime.snapshot.duration or 0
@@ -24,7 +33,7 @@ function seekbar_renderer.new(deps)
     if seek_w < dp(80) then return end
   
     if duration <= 0 then
-      draw_rect(ass, x1, seek_y, x2, seek_y + seek_h, "#282828", "99")
+      draw_rect(ass, x1, seek_y, x2, seek_y + seek_h, track_color, track_alpha)
       return
     end
   
@@ -77,9 +86,9 @@ function seekbar_renderer.new(deps)
       return segments
     end
 
-    draw_boxes(ass, track_segments(x1, x2), "#282828", "99")
+    draw_boxes(ass, track_segments(x1, x2), track_color, track_alpha)
   
-    if runtime.snapshot.network then
+    do
       local cache_state = runtime.snapshot.cache_state or {}
       local ranges = cache_state["seekable-ranges"] or {}
       local cache_segments = {}
@@ -93,7 +102,7 @@ function seekbar_renderer.new(deps)
           end
         end
       end
-      draw_boxes(ass, cache_segments, "#b1b1b1", "66")
+      draw_boxes(ass, cache_segments, cache_color, cache_alpha)
     end
   
     draw_boxes(ass, track_segments(x1, handle_x), opts.accent_color, "00")
