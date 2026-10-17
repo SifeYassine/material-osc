@@ -125,7 +125,18 @@ local definitions = {
   {name = "sponsorblock_multicolored_segments", default = true,
     group = "sponsorblock"},
   {name = "sponsorblock_show_submit", default = true, group = "sponsorblock"},
-  {name = "sponsorblock_show_voting", default = true, group = "sponsorblock"}
+  {name = "sponsorblock_show_voting", default = true, group = "sponsorblock"},
+
+  -- ModernZ-style additions
+  {name = "windowcontrols_close_hover", default = "#F45C5B", group = "modernz",
+    comment = "# ModernZ-style additions"},
+  {name = "windowcontrols_max_hover", default = "#F8BC3A", group = "modernz"},
+  {name = "windowcontrols_min_hover", default = "#43CB44", group = "modernz"},
+  {name = "hover_effect", default = "size,color", group = "modernz",
+    normalize = csv("[%w_]+")},
+  {name = "hover_effect_color", default = "#7B5BF5", group = "modernz"},
+  {name = "hover_button_size", default = 115, group = "modernz",
+    normalize = number({default = 115, min = 50, max = 200})},
 }
 
 local by_name = {}

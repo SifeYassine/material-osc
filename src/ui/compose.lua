@@ -25,6 +25,7 @@ function compose.new(deps)
   local default_text_font = deps.default_text_font
   local icon_text_size = deps.icon_text_size
   local normal_text_size = deps.normal_text_size
+  local opts = deps.opts or {}
   local render_pass, default_render_pass = "base", "base"
   local register_interactions = true
 
@@ -376,11 +377,29 @@ function compose.new(deps)
       local hovered = mouse_in(bounds) or
         (runtime.input.drawing_keyboard_focus and
           runtime.input.keyboard_focus == self.modifier.pointer_name)
-      local draws_hover_icon = self.hover_icon_color and hovered and
-        (render_pass == "interaction" or render_pass == "modal")
-      if is_render_pass(self.render_pass) or draws_hover_icon then
+      -- ModernZ hover effect (size,color). Clickable base-pass icons move to the
+      -- interaction pass so the hovered icon replaces the normal one instead of
+      -- being stacked on top of it.
+      local effect = tostring(opts.hover_effect or "")
+      local effect_size = effect:find("size", 1, true) ~= nil
+      local effect_color = effect:find("color", 1, true) ~= nil
+      local icon_pass = self.render_pass
+      if effect ~= "" and self.modifier.pointer_name and
+        (icon_pass or default_render_pass) == "base" then
+        icon_pass = "interaction"
+      end
+      local hover_color = self.hover_icon_color or
+        (effect_color and self.modifier.pointer_name and opts.hover_effect_color)
+      local hover_pass = render_pass == "interaction" or render_pass == "modal"
+      local draws_hover_icon = hover_color and hovered and self.enabled and hover_pass
+      if is_render_pass(icon_pass) or draws_hover_icon then
         local icon_color =
-          draws_hover_icon and self.hover_icon_color or self.icon_color
+          draws_hover_icon and hover_color or self.icon_color
+        local icon_size = self.icon_size
+        if effect_size and hovered and self.enabled and hover_pass and
+          self.modifier.pointer_name then
+          icon_size = icon_size * (tonumber(opts.hover_button_size) or 100) / 100
+        end
         local icon_alpha = self.alpha
         if not self.enabled then
           local transition_alpha = tonumber(icon_alpha or "00", 16) or 0
@@ -401,7 +420,7 @@ function compose.new(deps)
           draw_icon(ass, center_x, center_y, self.transition_icon, icon_color,
             self.icon_size, faded_alpha(progress), self.ignore_controller_fade)
         else
-          draw_icon(ass, center_x, center_y, self.icon, icon_color, self.icon_size,
+          draw_icon(ass, center_x, center_y, self.icon, icon_color, icon_size,
             icon_alpha, self.ignore_controller_fade)
         end
       end
