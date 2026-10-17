@@ -888,7 +888,7 @@ local tooltip_service = tooltip_service_module.new({
 })
 local function request_tooltip(...) return tooltip_service:request(...) end
 local compose = compose_module.new({
-  runtime = runtime, dp = dp, mouse_in = mouse_in,
+  runtime = runtime, dp = dp, mouse_in = mouse_in, opts = opts,
   draw_box = draw_box,
   draw_connected_pill_segment = draw_connected_pill_segment,
   draw_icon = draw_icon, draw_text = draw_text,
@@ -1301,7 +1301,8 @@ options_update_handler = function(changed)
   if changed.dpi_scale or changed.single_click_actions_enabled or
     changed.seeking_zone_percentage or changed.seek_step_seconds or
     changed.max_volume_percentage or changed.ontop_button or
-    changed.info_button then
+    changed.info_button or changed.windowcontrols_close_hover or
+    changed.windowcontrols_max_hover or changed.windowcontrols_min_hover then
     recreate_app()
   end
   if changed.auto_window_resize and opts.auto_window_resize ~= "auto" then

@@ -998,6 +998,7 @@ function controls.new(services)
       render_pass = "interaction", ignore_controller_fade = true,
       tooltip_allow_when_suppressed = true,
       horizontal_padding = 6, tooltip = "Minimize",
+      hover_icon_color = config.opts.windowcontrols_min_hover,
       on_click = function() mp.set_property_bool("window-minimized", true) end
     })
     node.maximize = IconButton({
@@ -1006,6 +1007,7 @@ function controls.new(services)
       tooltip_allow_when_suppressed = true,
       icon_size = 18, horizontal_padding = 6,
       tooltip = "Maximize",
+      hover_icon_color = config.opts.windowcontrols_max_hover,
       on_click = function()
         if state.pip.active then
           set_pip_enabled(false)
@@ -1020,11 +1022,10 @@ function controls.new(services)
       name = "window-close-button", icon = "close", size = 22,
       render_pass = "interaction", ignore_controller_fade = true,
       tooltip_allow_when_suppressed = true,
-      horizontal_padding = 6, hover_icon_color = "#000000", tooltip = "Close",
+      horizontal_padding = 6, tooltip = "Close",
+      hover_icon_color = config.opts.windowcontrols_close_hover,
       on_click = function() mp.commandv("quit") end
     })
-    node.close.modifier.hover_color = "#FF5263"
-    node.close.modifier.hover_alpha = "40"
     node.pill = Pill({
       gap = 0,
       children = {node.minimize, node.maximize, node.close}
