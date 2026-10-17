@@ -827,11 +827,29 @@ function controls.new(services)
       icon = "open_in_full", horizontal_padding = 6, tooltip = "Fullscreen",
       shortcut = "fullscreen",
       on_click = function() mp.commandv("cycle", "fullscreen") end})
+    -- pin button: keeps the window on top at its current size (picture-in-picture
+    -- has its own button)
+    node.ontop = IconButton({name = "ontop-button", icon = "keep_off",
+      horizontal_padding = 6, tooltip = "Pin Window",
+      on_click = function() mp.commandv("cycle", "ontop") end})
+    node.ontop_visibility = Visibility({
+      visible = config.opts.ontop_button,
+      child = node.ontop
+    })
+    -- ModernZ-style info button (stats overlay)
+    node.info = IconButton({name = "info-button", icon = "info",
+      horizontal_padding = 6, tooltip = "Information",
+      on_click = function() mp.command(config.opts.info_mbtn_left_command) end})
+    node.info_visibility = Visibility({
+      visible = config.opts.info_button,
+      child = node.info
+    })
     node.ending = Pill({
       gap = 0,
       children = {
         node.subtitles_visibility, node.screenshot_visibility,
-        node.pip_visibility, node.settings, node.fullscreen
+        node.pip_visibility, node.settings, node.info_visibility,
+        node.ontop_visibility, node.fullscreen
       },
       modifier = Modifier()
     })
@@ -849,6 +867,8 @@ function controls.new(services)
       self.sponsorblock:update()
       self.screenshot_visibility:set_visible(config.opts.screenshot_button)
       self.pip_visibility:set_visible(config.opts.pip_button)
+      self.ontop_visibility:set_visible(config.opts.ontop_button)
+      self.info_visibility:set_visible(config.opts.info_button)
       if static_changed then
         self.play:update({
           icon = snapshot.paused and "play_arrow" or "pause",
@@ -890,6 +910,11 @@ function controls.new(services)
         self.fullscreen:update({
           icon = snapshot.fullscreen and "close_fullscreen" or "open_in_full",
           tooltip = snapshot.fullscreen and "Exit Fullscreen" or "Fullscreen"
+        })
+        self.ontop:update({
+          icon = snapshot.ontop and "keep" or "keep_off",
+          icon_color = snapshot.ontop and config.opts.accent_color or "#FFFFFF",
+          tooltip = snapshot.ontop and "Unpin Window" or "Pin Window"
         })
       end
     end

@@ -1300,7 +1300,8 @@ options_update_handler = function(changed)
   end
   if changed.dpi_scale or changed.single_click_actions_enabled or
     changed.seeking_zone_percentage or changed.seek_step_seconds or
-    changed.max_volume_percentage then
+    changed.max_volume_percentage or changed.ontop_button or
+    changed.info_button then
     recreate_app()
   end
   if changed.auto_window_resize and opts.auto_window_resize ~= "auto" then

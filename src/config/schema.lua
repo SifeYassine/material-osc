@@ -102,6 +102,11 @@ local definitions = {
   {name = "sponsorblock_show_voting", default = true, group = "sponsorblock"},
 
   -- ModernZ-style additions
+  {name = "ontop_button", default = true, group = "modernz",
+    comment = "# ModernZ-style additions"},
+  {name = "info_button", default = true, group = "modernz"},
+  {name = "info_mbtn_left_command",
+    default = "script-binding stats/display-page-1-toggle", group = "modernz"},
   {name = "drag_border", default = 16, group = "modernz",
     normalize = number({default = 16, min = 0})},
   {name = "auto_window_resize", default = "auto", group = "modernz",
