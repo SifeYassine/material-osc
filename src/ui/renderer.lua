@@ -148,6 +148,20 @@ function renderer.new(args)
     ass:draw_stop()
   end
 
+  function service:draw_outlined_box(ass, x1, y1, x2, y2, radius, color,
+      outline_color, outline_width, alpha)
+    if x2 <= x1 or y2 <= y1 then return end
+    local faded = self:fade_alpha(alpha)
+    ass:new_event(); ass:pos(x1, y1); ass:an(7)
+    ass:append(string.format(
+      "{\\blur0\\bord%s\\shad0\\1c&H%s&\\3c&H%s&\\1a&H%s&\\3a&H%s&}",
+      outline_width or 1, self:ass_color(color), self:ass_color(outline_color),
+      faded, faded))
+    ass:draw_start()
+    ass:round_rect_cw(0, 0, x2 - x1, y2 - y1, radius or 0)
+    ass:draw_stop()
+  end
+
   function service:draw_round_box(ass, x1, y1, x2, y2,
       top_radius, bottom_radius, color, alpha)
     if x2 <= x1 or y2 <= y1 then return end

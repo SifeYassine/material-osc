@@ -134,6 +134,12 @@ local definitions = {
     normalize = number({default = 100, min = 0})},
   {name = "window_fade_blur_strength", default = 100, group = "modernz",
     normalize = number({default = 100, min = 0})},
+  {name = "thumbnail_border", default = 3, group = "modernz",
+    normalize = number({default = 3, min = 0})},
+  {name = "thumbnail_border_radius", default = 5, group = "modernz",
+    normalize = number({default = 5, min = 0})},
+  {name = "thumbnail_border_color", default = "#111111", group = "modernz"},
+  {name = "thumbnail_border_outline", default = "#404040", group = "modernz"},
 }
 
 local by_name = {}
