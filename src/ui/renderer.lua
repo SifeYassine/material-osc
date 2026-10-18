@@ -134,6 +134,20 @@ function renderer.new(args)
     ass:draw_stop()
   end
 
+  -- ModernZ-style fade: a thin box whose blurred border forms the gradient.
+  -- opacity: explicit opacity (ignores the controller fade) or nil to follow it.
+  function service:draw_fade(ass, x1, y1, x2, y2, color, size, blur, opacity)
+    if x2 <= x1 or y2 <= y1 or size <= 0 then return end
+    local alpha = opacity and self:alpha(opacity) or self:fade_alpha("00")
+    ass:new_event(); ass:pos(x1, y1); ass:an(7)
+    ass:append(string.format(
+      "{\\blur%s\\bord%s\\shad0\\1c&H%s&\\3c&H%s&\\1a&H%s&\\3a&H%s&}",
+      blur, size, self:ass_color(color), self:ass_color(color), alpha, alpha))
+    ass:draw_start()
+    ass:rect_cw(0, 0, x2 - x1, y2 - y1)
+    ass:draw_stop()
+  end
+
   function service:draw_round_box(ass, x1, y1, x2, y2,
       top_radius, bottom_radius, color, alpha)
     if x2 <= x1 or y2 <= y1 then return end
