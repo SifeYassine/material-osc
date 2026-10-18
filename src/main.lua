@@ -343,6 +343,12 @@ local function create_app(services)
       state.volume.popup_bounds, state.volume.button_bounds = nil, nil
       state.edge_seek.left.bounds, state.edge_seek.right.bounds = nil, nil
     elseif state.controller.opacity.value > 0 then
+      -- ModernZ-style dark fade behind the controls
+      local fade = tonumber(opts.fade_alpha) or 0
+      if fade > 0 then
+        ui.draw_fade(ass, root.x, root.y2 - 1, root.x2, root.y2, opts.osc_color,
+          ui.dp(fade), ui.dp(tonumber(opts.fade_blur_strength) or 0))
+      end
       state.controller.bounds = ui.draw_node(self.controller, ass, root)
     else
       local size = ui.measure_node(self.controller, root)
@@ -451,6 +457,13 @@ local function create_app(services)
     end
     if state.window_controls.bounds and window_controls_visible and
       not modal_open then
+      local window_fade = tonumber(opts.window_fade_alpha) or 0
+      if window_fade > 0 and not state.pip.active then
+        ui.draw_fade(ass, root.x, root.y, root.x2, root.y + 1, opts.osc_color,
+          ui.dp(window_fade),
+          ui.dp(tonumber(opts.window_fade_blur_strength) or 0),
+          ui.clamp(state.window_controls.opacity.value, 0, 1))
+      end
       ui.draw_node(self.window_controls, ass, root)
     end
     state.pointer.x, state.pointer.y = pointer_x, pointer_y
@@ -947,6 +960,7 @@ local services = {
     edge_seek_top_inset = edge_seek_top_inset,
     alpha = ass_alpha_for_opacity, draw_rect = draw_rect, draw_box = draw_box,
     draw_round_box = draw_round_box,
+    draw_fade = function(...) return ui_renderer:draw_fade(...) end,
     draw_icon = draw_icon, draw_brand_logo = draw_brand_logo,
     toggle_brand_logo = function() return brand_logo:toggle() end,
     draw_text = draw_text, draw_seekbar = draw_seekbar,
