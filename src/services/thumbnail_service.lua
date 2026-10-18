@@ -14,6 +14,8 @@ function thumbnail.new(deps)
   local enqueue_effect = deps.enqueue_effect
   local render = deps.render
   local draw_box = deps.draw_box
+  local draw_outlined_box = deps.draw_outlined_box
+  local opts = deps.opts or {}
   local draw_text = deps.draw_text
   local text_intrinsic_width = deps.text_intrinsic_width
   local truncate_utf8_to_width = deps.truncate_utf8_to_width
@@ -83,7 +85,8 @@ function thumbnail.new(deps)
     local pill_gap = dp(6)
     local bottom_gap = dp(18)
     local margin = dp(8)
-    local frame_pad = dp(1)
+    -- ModernZ-style thumbnail frame: border, rounded corners and outline
+    local frame_pad = dp(math.max(0, tonumber(opts.thumbnail_border) or 1))
     local time_pill_w = text_intrinsic_width(time_text, pill_text_size) +
                 pill_horizontal_padding * 2
 
@@ -141,8 +144,11 @@ function thumbnail.new(deps)
     local category_x2 = category_x1 + category_pill_w
 
     if has_thumbnail then
-      draw_box(ass, thumb_x1 - frame_pad, thumb_y1 - frame_pad,
-           thumb_x2 + frame_pad, thumb_y2 + frame_pad, 0, "#050708", "20")
+      draw_outlined_box(ass, thumb_x1 - frame_pad, thumb_y1 - frame_pad,
+           thumb_x2 + frame_pad, thumb_y2 + frame_pad,
+           dp(tonumber(opts.thumbnail_border_radius) or 0),
+           opts.thumbnail_border_color or "#050708",
+           opts.thumbnail_border_outline or "#050708", dp(1), "00")
       local overlay_x = math.floor(thumb_x1 + 0.5)
       local overlay_y = math.floor(thumb_y1 + 0.5)
       enqueue_effect("thumbnail-request", function()
