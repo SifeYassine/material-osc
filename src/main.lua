@@ -105,7 +105,13 @@ local filesystem = filesystem_module.new({
   mp = mp, utils = utils, process = process, runtime = platform_runtime
 })
 local http = http_module.new({process = process, runtime = platform_runtime})
-local dialogs = dialogs_module.new({process = process, runtime = platform_runtime})
+local dialogs = dialogs_module.new({
+  mp = mp, process = process, runtime = platform_runtime
+})
+-- "script-message-to material_osc dialog ..." for menus and key bindings
+require("src.services.dialog_actions").new({
+  mp = mp, utils = utils, msg = msg, dialogs = dialogs
+}):register()
 local persistence = persistence_module.new({filesystem = filesystem, utils = utils})
 local timers = timers_module.new({mp = mp})
 local media_title = media_title_module.new({
