@@ -11,7 +11,7 @@ function application_state.new(args)
   local opts = args.opts
   local animation = args.animation
   local runtime = {
-    viewport = {w = 1280, h = 720, dpi = 1},
+    viewport = {w = 1280, h = 720, dpi = 1, ui_scale = 1},
     controller = {
       visible = opts.show_on_mouse_move,
       input_suppressed = false,
