@@ -1247,6 +1247,7 @@ end
 local function recreate_app() app = create_app(services) end
 controller = controller_module.new({
   runtime = runtime, mp = mp, opts = opts, navigation = navigation,
+  window_scale = function() return ui_renderer:window_scale() end,
   update_dragging = function() runtime_host:update_dragging() end,
   thumbnail = thumbnail_service, mouse_in = mouse_in,
   edge_seek_top_inset = edge_seek_top_inset,
@@ -1321,11 +1322,15 @@ options_update_handler = function(changed)
     changed.skip_outro_detection_texts then
     sponsorblock_service:on_options_changed(changed)
   end
+  if changed.vidscale or changed.vidscale_reference or changed.vidscale_min then
+    runtime.viewport.ui_scale = ui_renderer:window_scale()
+  end
   if changed.dpi_scale or changed.single_click_actions_enabled or
     changed.seeking_zone_percentage or changed.seek_step_seconds or
     changed.max_volume_percentage or changed.ontop_button or
     changed.info_button or changed.windowcontrols_close_hover or
-    changed.windowcontrols_max_hover or changed.windowcontrols_min_hover then
+    changed.windowcontrols_max_hover or changed.windowcontrols_min_hover or
+    changed.vidscale or changed.vidscale_reference or changed.vidscale_min then
     recreate_app()
   end
   if changed.show_on_mouse_move then

@@ -140,6 +140,12 @@ local definitions = {
     normalize = number({default = 5, min = 0})},
   {name = "thumbnail_border_color", default = "#111111", group = "modernz"},
   {name = "thumbnail_border_outline", default = "#404040", group = "modernz"},
+  {name = "vidscale", default = "shrink", group = "modernz",
+    normalize = enum("shrink", {"shrink", "yes", "no"})},
+  {name = "vidscale_reference", default = 720, group = "modernz",
+    normalize = number({default = 720, min = 100})},
+  {name = "vidscale_min", default = 0.35, group = "modernz",
+    normalize = number({default = 0.35, min = 0.1, max = 1})},
 }
 
 local by_name = {}
