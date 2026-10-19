@@ -142,6 +142,14 @@ local definitions = {
     normalize = number({default = 720, min = 100})},
   {name = "vidscale_min", default = 0.35, group = "modernz",
     normalize = number({default = 0.35, min = 0.1, max = 1})},
+  -- input_conf: build the menu from "#menu:" comments in input.conf
+  -- material: material-osc's own short menu
+  {name = "context_menu_items", default = "input_conf", group = "modernz",
+    normalize = enum("input_conf", {"input_conf", "material"})},
+  {name = "menu_max_title_length", default = 80, group = "modernz",
+    normalize = number({default = 80, min = 0})},
+  {name = "menu_max_playlist_items", default = 20, group = "modernz",
+    normalize = number({default = 20, min = 0})},
   {name = "drag_border", default = 16, group = "modernz",
     normalize = number({default = 16, min = 0})},
   {name = "auto_window_resize", default = "auto", group = "modernz",

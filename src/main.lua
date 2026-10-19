@@ -936,6 +936,14 @@ local services = {
   bookmarks = bookmark_service,
   easter_eggs = easter_egg_collection,
   context_actions = context_actions,
+  menu_items = (function()
+    local builder = require("src.services.menu_builder").new({
+      mp = mp, utils = utils, msg = msg, opts = opts
+    })
+    -- read input.conf and announce the menu to other scripts right away
+    if opts.context_menu_items == "input_conf" then builder:start() end
+    return require("src.services.menu_items").new({builder = builder})
+  end)(),
   sponsorblock = sponsorblock_service,
   toast = toast_service,
   close_context_menu = close_context_menu,
