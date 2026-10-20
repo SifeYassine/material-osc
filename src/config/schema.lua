@@ -142,6 +142,17 @@ local definitions = {
     normalize = number({default = 720, min = 100})},
   {name = "vidscale_min", default = 0.35, group = "modernz",
     normalize = number({default = 0.35, min = 0.1, max = 1})},
+  {name = "precise_seek", default = true, group = "modernz"},
+  {name = "precise_seek_span", default = 30, group = "modernz",
+    normalize = number({default = 30, min = 1})},
+  {name = "precise_seek_step", default = 2, group = "modernz",
+    normalize = number({default = 2, min = 0.01})},
+  {name = "precise_seek_threshold", default = 40, group = "modernz",
+    normalize = number({default = 40, min = 8})},
+  {name = "precise_seek_invert_swipe", default = false, group = "modernz"},
+  {name = "precise_strip", default = true, group = "modernz"},
+  {name = "precise_strip_height", default = 96, group = "modernz",
+    normalize = number({default = 96, min = 40, max = 240})},
   -- input_conf: build the menu from "#menu:" comments in input.conf
   -- material: material-osc's own short menu
   {name = "context_menu_items", default = "input_conf", group = "modernz",

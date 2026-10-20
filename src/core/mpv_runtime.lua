@@ -67,6 +67,8 @@ function mpv_runtime.new(args)
     local pointer, viewport = state.pointer, state.viewport
     if pointer.x < 0 or pointer.y < 0 then return true end
     if modal_open() then return false end
+    -- precise seeking uses press-and-drag on the video for fine scrubbing
+    if args.precise_seek and args.precise_seek:active() then return false end
     local box
     for index = #state.input.order, 1, -1 do
       local candidate = state.input.hitboxes[state.input.order[index]]
@@ -96,8 +98,19 @@ function mpv_runtime.new(args)
       "allow-hide-cursor+allow-vo-dragging" or "allow-hide-cursor")
   end
 
+  function service:set_wheel_enabled(enabled)
+    if enabled then
+      mp.enable_key_bindings("material-osc-wheel",
+        "allow-hide-cursor+allow-vo-dragging")
+    else
+      mp.disable_key_bindings("material-osc-wheel")
+    end
+  end
+
   function service:update_mouse_area()
     self:update_dragging()
+    self:set_mouse_area("material-osc-wheel",
+      0, 0, state.viewport.w, state.viewport.h)
     self:set_mouse_area("material-osc-showhide", 0, 0, 0, 0)
     self:set_mouse_area("material-osc-input",
       0, 0, state.viewport.w, state.viewport.h)
@@ -359,13 +372,17 @@ function mpv_runtime.new(args)
       "allow-vo-dragging+allow-hide-cursor")
     mp.set_key_bindings({
       {"mouse_move", move}, {"mouse_leave", leave},
-      {"mbtn_left_dbl", function() controller():on_primary_double() end},
-      {"wheel_up", function() controller():on_wheel(-1) end},
-      {"wheel_down", function() controller():on_wheel(1) end}
+      {"mbtn_left_dbl", function() controller():on_primary_double() end}
     }, "material-osc-input", "force")
     mp.enable_key_bindings("material-osc-input",
       "allow-hide-cursor+allow-vo-dragging")
     self.input_draggable = true
+    -- the wheel lives in its own section so precise seeking can take it over
+    mp.set_key_bindings({
+      {"wheel_up", function() controller():on_wheel(-1) end},
+      {"wheel_down", function() controller():on_wheel(1) end}
+    }, "material-osc-wheel", "force")
+    self:set_wheel_enabled(true)
     mp.set_key_bindings({
       {"mbtn_right", function() controller():on_secondary_down() end}
     }, context_menu_mouse_binding, "force")
