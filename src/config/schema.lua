@@ -34,7 +34,7 @@ end
 
 local definitions = {
   {name = "dpi_scale", default = "auto", group = "appearance"},
-  {name = "accent_color", default = "#00bbff", group = "appearance"},
+  {name = "accent_color", default = "#7B5BF5", group = "appearance"},
   {name = "context_menu", default = true, group = "appearance"},
   {name = "tooltip", default = true, group = "appearance"},
   {name = "show_mini_seekbar", default = false, group = "appearance"},
