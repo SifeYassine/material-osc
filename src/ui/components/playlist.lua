@@ -452,7 +452,7 @@ function playlist.new(services, trailing)
       local visible_rows = math.min(math.max(1, item_count), maximum_rows)
       self.panel_height = panel_chrome + visible_rows * row_h
       local target_width =
-        playlist_state.open and self.panel_width or dp(134)
+        playlist_state.open and self.panel_width or dp(50)
       local target_height =
         playlist_state.open and self.panel_height or dp(42)
       if morphing then
@@ -503,7 +503,7 @@ function playlist.new(services, trailing)
       local gap, padding = 0, dp(4)
       return button.w, button.h,
         Rect({x = bounds.x, y = bounds.y,
-          w = button.w * 3 + gap * 2 + padding * 2,
+          w = button.w + padding * 2,
           h = button.h + padding * 2})
     end
 
@@ -512,7 +512,7 @@ function playlist.new(services, trailing)
         measure_node(node.playlist, source).h
       local from_y, to_y = source.y + dp(4), target.y2 - dp(38)
       local y = from_y + (to_y - from_y) * progress
-      for index, button in ipairs({node.playlist, node.previous, node.next}) do
+      for index, button in ipairs({node.playlist}) do
         -- The pill and expanded footer share the same controls. Keep their
         -- horizontal centers fixed so opening only lifts them vertically.
         local x = source.x + dp(4) +
@@ -569,7 +569,7 @@ function playlist.new(services, trailing)
 
     function node:draw_expanded(ass, bounds)
       local source = playlist_state.anchor_bounds or Rect({
-        x = bounds.x + dp(12), y = bounds.y2 - dp(54), w = dp(134), h = dp(42)
+        x = bounds.x + dp(12), y = bounds.y2 - dp(54), w = dp(50), h = dp(42)
       })
       if self.morph <= 0 and not playlist_state.open and
         not playlist_state.animation:is_running() and

@@ -137,7 +137,7 @@ function navigation.new(args)
     runtime.playlist.drag_start_y = nil
     runtime.playlist.dragging_scroll = false
     runtime.playlist.handoff = false
-    runtime.playlist.width_animation:snap(args.dp(118))
+    runtime.playlist.width_animation:snap(args.dp(50))
     runtime.playlist.height_animation:snap(args.dp(42))
     local state = runtime.settings
     state.page, state.pending_page, state.transition_phase = "root", nil, nil
