@@ -53,8 +53,10 @@ function controls.new(services)
       state.controller.opacity:snap(0)
       mp.set_property_bool("fullscreen", false)
       mp.set_property_bool("window-maximized", false)
-      mp.set_property_bool("ontop", true)
+      -- resize before pinning: on Windows a geometry change made right after
+      -- ontop is ignored, leaving the pinned window at full size
       mp.set_property("geometry", "30%-24-24")
+      mp.set_property_bool("ontop", true)
     else
       local restore = state.pip.restore or {}
       state.pip.active, state.pip.restore, state.pip.bounds = false, nil, nil
