@@ -15,6 +15,22 @@ I would say, you should fuck around and find out!
 
 https://github.com/user-attachments/assets/65046da7-7d9e-4492-9e93-47650b8fc484
 
+### This fork
+
+A right-click menu built from `input.conf`, with cascading submenus:
+
+![Context menu](assets/screenshots/context-menu.jpg)
+
+YouTube-style precise seeking: drag up from the seekbar to scrub through a filmstrip.
+
+![Precise seeking](assets/screenshots/precise-seek.jpg)
+
+Previous/next beside play/pause, pin and info buttons, and the thumbnail preview on the seekbar:
+
+![Controls](assets/screenshots/controls.jpg)
+
+![Seekbar thumbnail](assets/screenshots/seek-preview.jpg)
+
 ## Configuration
 
 material-osc can be customized with a `material-osc.conf` file in mpv's
