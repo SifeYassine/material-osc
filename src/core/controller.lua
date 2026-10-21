@@ -214,6 +214,7 @@ function controller.new(args)
     end
     local active = runtime.pointer.active
     if active and active.on_move then active.on_move(active) end
+    if args.update_dragging then args.update_dragging() end
     -- Update top-hover ownership before hiding or showing the bottom
     -- controller. Any visibility render triggered below then sees the correct
     -- independent window-control state.
@@ -277,12 +278,17 @@ function controller.new(args)
     self:update_mouse()
     self:update_window_controls_hover()
     local _, box = args.hitbox_at_cursor()
+    runtime.pointer.pressed_button = nil
     if box and box.on_press then
       if box.on_move or box.on_release then runtime.pointer.active = box end
       box.on_press(box)
     elseif box and box.on_click then
       if box.name == "video-surface" then runtime.pointer.pending_click = box
-      else box.on_click() end
+      else
+        -- buttons fire on release, so a press that turns into a window drag
+        -- never triggers them
+        runtime.pointer.pressed_button = box
+      end
     end
     self:sync_visibility_with_pointer()
   end
@@ -309,6 +315,14 @@ function controller.new(args)
       active.on_release(active)
     end
     runtime.pointer.active = nil
+    local pressed = runtime.pointer.pressed_button
+    runtime.pointer.pressed_button = nil
+    if pressed then
+      self:update_mouse()
+      if args.mouse_in(pressed) and pressed.enabled ~= false then
+        pressed.on_click()
+      end
+    end
     local pending = runtime.pointer.pending_click
     runtime.pointer.pending_click = nil
     if pending and pending.name == "video-surface" then
@@ -334,6 +348,7 @@ function controller.new(args)
     if event and event.canceled then
       runtime.pointer.active = nil
       runtime.pointer.pending_click = nil
+      runtime.pointer.pressed_button = nil
       runtime.pointer.window_dragging = nil
       if runtime.pointer.click_timer then
         runtime.pointer.click_timer:kill()
@@ -361,7 +376,11 @@ function controller.new(args)
       runtime.pointer.window_dragging = nil
       return
     end
-    if not event or event.event == "down" or event.event == "press" then
+    if not event or event.event == "press" then
+      -- a press without separate down/up events is a complete click
+      self:on_primary_down()
+      self:on_primary_up()
+    elseif event.event == "down" then
       self:on_primary_down()
     elseif event.event == "up" then
       self:on_primary_up()
