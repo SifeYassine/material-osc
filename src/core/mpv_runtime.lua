@@ -45,7 +45,59 @@ function mpv_runtime.new(args)
     end
   end
 
+  -- mpv's built-in window dragging only arms on press where every mouse
+  -- section allows it, so flag the full-window input section per pointer
+  -- position: empty space, the video, edge-seek zones, the top drag strip and
+  -- a band along every window edge drag the window; buttons, sliders and open
+  -- menus don't.
+  local passthrough_hitboxes = {
+    ["video-surface"] = true, ["window-drag-area"] = true,
+    ["controller-area"] = true
+  }
+
+  local function modal_open()
+    if state.update.open or state.context_menu.open then return true end
+    for _, name in ipairs(args.navigation.dialogs) do
+      if state[name].open then return true end
+    end
+    return false
+  end
+
+  local function draggable_at_pointer()
+    local pointer, viewport = state.pointer, state.viewport
+    if pointer.x < 0 or pointer.y < 0 then return true end
+    if modal_open() then return false end
+    local box
+    for index = #state.input.order, 1, -1 do
+      local candidate = state.input.hitboxes[state.input.order[index]]
+      if candidate and candidate.enabled ~= false and
+        pointer.x >= candidate.x1 and pointer.x <= candidate.x2 and
+        pointer.y >= candidate.y1 and pointer.y <= candidate.y2 then
+        box = candidate
+        break
+      end
+    end
+    if not box or passthrough_hitboxes[box.name] or
+      tostring(box.name):match("^edge%-seek%-") or
+      not (box.on_press or box.on_click) then
+      return true
+    end
+    if box.on_press then return false end
+    local band = (tonumber(args.opts.drag_border) or 16) * (viewport.dpi or 1)
+    return pointer.x <= band or pointer.y <= band or
+      pointer.x >= viewport.w - band or pointer.y >= viewport.h - band
+  end
+
+  function service:update_dragging()
+    local draggable = draggable_at_pointer()
+    if draggable == self.input_draggable then return end
+    self.input_draggable = draggable
+    mp.enable_key_bindings("material-osc-input", draggable and
+      "allow-hide-cursor+allow-vo-dragging" or "allow-hide-cursor")
+  end
+
   function service:update_mouse_area()
+    self:update_dragging()
     self:set_mouse_area("material-osc-showhide", 0, 0, 0, 0)
     self:set_mouse_area("material-osc-input",
       0, 0, state.viewport.w, state.viewport.h)
@@ -313,6 +365,7 @@ function mpv_runtime.new(args)
     }, "material-osc-input", "force")
     mp.enable_key_bindings("material-osc-input",
       "allow-hide-cursor+allow-vo-dragging")
+    self.input_draggable = true
     mp.set_key_bindings({
       {"mbtn_right", function() controller():on_secondary_down() end}
     }, context_menu_mouse_binding, "force")
@@ -335,7 +388,8 @@ function mpv_runtime.new(args)
     for _, name in ipairs({"controller", "volume-popup"}) do
       local binding = "material-osc-" .. name
       mp.set_key_bindings({{"mouse_move", move}, {"mouse_leave", leave}}, binding, "force")
-      mp.enable_key_bindings(binding)
+      -- dragging over these areas is decided by material-osc-input instead
+      mp.enable_key_bindings(binding, "allow-vo-dragging")
     end
 
     for _, name in ipairs(args.navigation.dialogs) do

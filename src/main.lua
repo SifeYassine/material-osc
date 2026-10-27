@@ -1059,7 +1059,7 @@ local function update_animation_targets(now)
 end
 
 runtime_host = mpv_runtime_module.new({
-  state = runtime, mp = mp, navigation = navigation,
+  state = runtime, mp = mp, navigation = navigation, opts = opts,
   context_menu_enabled = function() return opts.context_menu end,
   menu_keyboard = menu_keyboard,
   playback_indicator = playback_indicator,
@@ -1231,6 +1231,7 @@ end
 local function recreate_app() app = create_app(services) end
 controller = controller_module.new({
   runtime = runtime, mp = mp, opts = opts, navigation = navigation,
+  update_dragging = function() runtime_host:update_dragging() end,
   thumbnail = thumbnail_service, mouse_in = mouse_in,
   edge_seek_top_inset = edge_seek_top_inset,
   hitbox_at_cursor = hitbox_at_cursor,

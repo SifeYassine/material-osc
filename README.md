@@ -56,6 +56,7 @@ aspect ratio, and disables automatic window resizing between files; see
 | `mouse_timeout` | `2` | Seconds; `0` disables timeout | Controls how long the UI remains visible after pointer activity. |
 | `show_on_mouse_move` | `no` | `yes`, `no` | With `yes`, movement anywhere reveals the UI. With `no`, use the bottom edge for playback controls or the top edge for window controls. |
 | `single_click_actions_enabled` | `yes` | `yes`, `no` | Enables single-click play/pause and left/right edge seeking. Double-click fullscreen remains available when disabled. |
+| `drag_border` | `16` | Pixels; `0` disables the band | Width of the band along the window edges that drags the window, also over controls. Elsewhere the window drags from empty space and the video, but not from buttons, sliders or open menus. |
 | `seeking_zone_percentage` | `15` | `0`–`50` | Sets each fast-seek zone's width as a percentage of the window. |
 | `seek_step_seconds` | `5` | Seconds; minimum `1` | Sets how far edge clicks and edge scrolling seek backward or forward. |
 | `live_edge_offset_seconds` | `2` | Non-negative seconds or `-1` | After a live stream resumes from pausing or buffering, seeks this far behind the live edge. Set to `-1` to disable automatic catch-up. |
