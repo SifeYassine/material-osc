@@ -33,6 +33,9 @@ material-osc can be customized with a `material-osc.conf` file in mpv's
 | `show_empty_screen` | `yes` | `yes`, `no` | Shows the material-osc welcome screen when the playlist is empty. Set to `no` to leave the empty player unobstructed. |
 | `screenshot_button` | `yes` | `yes`, `no` | Shows or hides the screenshot button in the playback controls. |
 | `pip_button` | `yes` | `yes`, `no` | Shows or hides the Picture-in-Picture button in the playback controls. |
+| `ontop_button` | `no` | `yes`, `no` | Shows a pin button in the playback controls that toggles always-on-top. It stays highlighted while pinned. |
+| `info_button` | `no` | `yes`, `no` | Shows an info button in the playback controls that runs `info_mbtn_left_command`. |
+| `info_mbtn_left_command` | `"script-binding stats/display-page-1-toggle"` | Any mpv input command | Command run by the info button. The default toggles the stats overlay. |
 | `window_controls` | `auto` | `auto`, `yes`, `no` | Shows window controls automatically for borderless and fullscreen windows, always, or never. |
 
 ##### Window controls
