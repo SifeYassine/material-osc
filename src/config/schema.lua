@@ -34,6 +34,12 @@ end
 
 local definitions = {
   {name = "dpi_scale", default = "auto", group = "appearance"},
+  {name = "vidscale", default = "no", group = "appearance",
+    normalize = enum("no", {"shrink", "yes", "no"})},
+  {name = "vidscale_reference", default = 720, group = "appearance",
+    normalize = number({default = 720, min = 100})},
+  {name = "vidscale_min", default = 0.35, group = "appearance",
+    normalize = number({default = 0.35, min = 0.1, max = 1})},
   {name = "accent_color", default = "#00bbff", group = "appearance"},
   {name = "context_menu", default = true, group = "appearance"},
   {name = "tooltip", default = true, group = "appearance"},
