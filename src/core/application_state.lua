@@ -166,7 +166,7 @@ function application_state.new(args)
     initial = 1, duration = 0.14
   })
   runtime.playlist.width_animation = animation.spring({
-    initial = 118,
+    initial = opts.prev_next_beside_play and 50 or 118,
     stiffness = POPUP_MORPH_STIFFNESS,
     damping = POPUP_MORPH_DAMPING
   })

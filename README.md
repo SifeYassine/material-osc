@@ -39,6 +39,7 @@ material-osc can be customized with a `material-osc.conf` file in mpv's
 | `ontop_button` | `no` | `yes`, `no` | Shows a pin button in the playback controls that toggles always-on-top. It stays highlighted while pinned. |
 | `info_button` | `no` | `yes`, `no` | Shows an info button in the playback controls that runs `info_mbtn_left_command`. |
 | `info_mbtn_left_command` | `"script-binding stats/display-page-1-toggle"` | Any mpv input command | Command run by the info button. The default toggles the stats overlay. |
+| `prev_next_beside_play` | `no` | `yes`, `no` | Shows previous and next in their own pill beside play/pause instead of in the playlist pill. |
 | `window_controls` | `auto` | `auto`, `yes`, `no` | Shows window controls automatically for borderless and fullscreen windows, always, or never. |
 
 ##### Window controls

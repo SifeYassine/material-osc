@@ -654,7 +654,7 @@ local seek_to_pos = function(value) return player:seek(value) end
 
 local menu_keyboard
 local navigation = navigation_module.new({
-  runtime = runtime, mp = mp, dp = dp,
+  runtime = runtime, mp = mp, dp = dp, opts = opts,
   render = function() if render then render() end end
 })
 local function set_dialog_open(name, open)
@@ -1312,8 +1312,8 @@ options_update_handler = function(changed)
   if changed.dpi_scale or changed.single_click_actions_enabled or
     changed.seeking_zone_percentage or changed.seek_step_seconds or
     changed.max_volume_percentage or changed.ontop_button or
-    changed.info_button or changed.vidscale or changed.vidscale_reference or
-    changed.vidscale_min then
+    changed.info_button or changed.prev_next_beside_play or changed.vidscale or
+    changed.vidscale_reference or changed.vidscale_min then
     recreate_app()
   end
   if changed.show_on_mouse_move then

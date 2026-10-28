@@ -49,6 +49,7 @@ local definitions = {
   {name = "pip_button", default = true, group = "appearance"},
   {name = "ontop_button", default = false, group = "appearance"},
   {name = "info_button", default = false, group = "appearance"},
+  {name = "prev_next_beside_play", default = false, group = "appearance"},
   {name = "info_mbtn_left_command",
     default = "script-binding stats/display-page-1-toggle", group = "appearance"},
   {name = "window_controls", default = "auto", group = "appearance",

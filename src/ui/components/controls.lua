@@ -645,6 +645,26 @@ function controls.new(services)
     node.play = IconButton({name = "play-button", icon = "pause", tooltip = "Pause",
       shortcut = "pause",
       on_click = function() mp.commandv("cycle", "pause") end})
+    -- with prev_next_beside_play, previous/next sit beside play/pause
+    -- instead of in the playlist pill
+    local function step_playlist(direction)
+      local snapshot = get_snapshot()
+      local count = snapshot.playlist_count or 0
+      local position = snapshot.playlist_pos or -1
+      if snapshot.playlist_looping and direction < 0 and position <= 0 then
+        mp.commandv("playlist-play-index", count - 1)
+      elseif snapshot.playlist_looping and direction > 0 and position >= count - 1 then
+        mp.commandv("playlist-play-index", 0)
+      else
+        mp.commandv(direction < 0 and "playlist-prev" or "playlist-next", "weak")
+      end
+    end
+    node.previous = IconButton({name = "playlist-previous", icon = "skip_previous",
+      tooltip = "Previous", shortcut = "playlist-prev",
+      on_click = function() step_playlist(-1) end})
+    node.next = IconButton({name = "playlist-next", icon = "skip_next",
+      tooltip = "Next", shortcut = "playlist-next",
+      on_click = function() step_playlist(1) end})
     node.volume = VolumeControl()
     node.time = TextItem({
       text = "0:00 / 0:00",
@@ -783,15 +803,17 @@ function controls.new(services)
       secondary = node.cached
     })
 
+    local starting = {Pill({children = {node.play}})}
+    if config.opts.prev_next_beside_play then
+      starting[#starting + 1] = Pill({children = {node.previous, node.next}})
+    end
+    starting[#starting + 1] = Pill({no_background = true, children = {node.volume}})
+    starting[#starting + 1] = node.time_cache
+    starting[#starting + 1] = node.chapter
     node.starting = Row({
       gap = dp(8),
       modifier = Modifier():align({horizontal = "starting", vertical = "center"}),
-      children = {
-        Pill({children = {node.play}}),
-        Pill({no_background = true, children = {node.volume}}),
-        node.time_cache,
-        node.chapter
-      }
+      children = starting
     })
     node.subtitles = IconButton({name = "subtitles-button", icon = "subtitles",
       horizontal_padding = 6, tooltip = "Subtitles",
@@ -875,6 +897,16 @@ function controls.new(services)
         self.play:update({
           icon = snapshot.paused and "play_arrow" or "pause",
           tooltip = snapshot.paused and "Play" or "Pause"
+        })
+      end
+      if static_changed and config.opts.prev_next_beside_play then
+        local count, position = snapshot.playlist_count or 0, snapshot.playlist_pos or -1
+        local wraps = snapshot.playlist_looping == true
+        self.previous:update({
+          enabled = count > 1 and position >= 0 and (wraps or position > 0)
+        })
+        self.next:update({
+          enabled = count > 1 and position >= 0 and (wraps or position < count - 1)
         })
       end
       local volume_progress = volume_state.animation.value
