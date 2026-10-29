@@ -158,6 +158,7 @@ local definitions = {
     normalize = number({default = 5, min = 0})},
   {name = "thumbnail_border_color", default = "#111111", group = "modernz"},
   {name = "thumbnail_border_outline", default = "#404040", group = "modernz"},
+  {name = "invert_touchpad_scroll", default = true, group = "modernz"},
 }
 
 local by_name = {}
