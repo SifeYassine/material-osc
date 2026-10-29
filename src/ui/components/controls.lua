@@ -32,6 +32,18 @@ function controls.new(services)
   local draw_node, IconButton, TextItem = ui.draw_node, ui.IconButton, ui.TextItem
   local Visibility, Row, Pill = ui.Visibility, ui.Row, ui.Pill
   local ConnectedPill = ui.ConnectedPill
+
+  -- black or white, whichever has more contrast on the given color (WCAG)
+  local function contrast_color(hex)
+    local r, g, b = tostring(hex):match("#?(%x%x)(%x%x)(%x%x)")
+    if not r then return "#FFFFFF" end
+    local function linear(value)
+      value = tonumber(value, 16) / 255
+      return value <= 0.03928 and value / 12.92 or ((value + 0.055) / 1.055) ^ 2.4
+    end
+    local luminance = 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b)
+    return luminance > 0.179 and "#000000" or "#FFFFFF"
+  end
   local is_render_pass = ui.is_render_pass
 
   local function set_pip_enabled(enabled, requested_window_state)
@@ -854,7 +866,7 @@ function controls.new(services)
     -- pin button: keeps the window on top at its current size (picture-in-picture
     -- has its own button)
     node.ontop = IconButton({name = "ontop-button", icon = "keep_off",
-      horizontal_padding = 6, tooltip = "Pin Window",
+      horizontal_padding = 6, tooltip = "Pin Window", shortcut = "ontop",
       on_click = function() mp.commandv("cycle", "ontop") end})
     node.ontop_visibility = Visibility({
       visible = config.opts.ontop_button,
@@ -945,10 +957,17 @@ function controls.new(services)
           icon = snapshot.fullscreen and "close_fullscreen" or "open_in_full",
           tooltip = snapshot.fullscreen and "Exit Fullscreen" or "Fullscreen"
         })
+        -- pinned: accent background like other selected controls, with a
+        -- black or white icon, whichever reads better on the accent
+        local pinned = snapshot.ontop == true
+        local pin = self.ontop.modifier
+        pin.background_color = pinned and config.opts.accent_color or nil
+        pin.background_alpha = "30"
+        pin.background_shape = {percent = 50}
         self.ontop:update({
-          icon = snapshot.ontop and "keep" or "keep_off",
-          icon_color = snapshot.ontop and config.opts.accent_color or "#FFFFFF",
-          tooltip = snapshot.ontop and "Unpin Window" or "Pin Window"
+          icon = pinned and "keep" or "keep_off",
+          icon_color = pinned and contrast_color(config.opts.accent_color) or "#FFFFFF",
+          tooltip = pinned and "Unpin Window" or "Pin Window"
         })
       end
     end
