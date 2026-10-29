@@ -154,6 +154,7 @@ local definitions = {
   {name = "precise_seek_threshold", default = 40, group = "modernz",
     normalize = number({default = 40, min = 8})},
   {name = "precise_seek_invert_swipe", default = false, group = "modernz"},
+  {name = "invert_touchpad_scroll", default = true, group = "modernz"},
   {name = "precise_strip", default = true, group = "modernz"},
   {name = "precise_strip_height", default = 96, group = "modernz",
     normalize = number({default = 96, min = 40, max = 240})},

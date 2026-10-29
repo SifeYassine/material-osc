@@ -383,8 +383,12 @@ function mpv_runtime.new(args)
     local function wheel(direction)
       return function(event)
         if event.event == "up" then return end
-        if wheel_steps * direction < 0 then wheel_steps = 0 end
-        wheel_steps = wheel_steps + direction * (tonumber(event.scale) or 1)
+        local amount = tonumber(event.scale) or 1
+        local sign = direction
+        -- fractional steps come from touchpads; a mouse notch is a full step
+        if args.opts.invert_touchpad_scroll and amount < 1 - 1e-6 then sign = -sign end
+        if wheel_steps * sign < 0 then wheel_steps = 0 end
+        wheel_steps = wheel_steps + sign * amount
         while math.abs(wheel_steps) >= 1 - 1e-6 do
           local step = wheel_steps > 0 and 1 or -1
           wheel_steps = wheel_steps - step
