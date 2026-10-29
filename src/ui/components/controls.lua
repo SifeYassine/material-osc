@@ -872,7 +872,7 @@ function controls.new(services)
       visible = config.opts.ontop_button,
       child = node.ontop
     })
-    -- ModernZ-style info button (stats overlay)
+    -- info button, runs info_mbtn_left_command (the stats overlay by default)
     node.info = IconButton({name = "info-button", icon = "info",
       horizontal_padding = 6, tooltip = "Information",
       on_click = function() mp.command(config.opts.info_mbtn_left_command) end})

@@ -30,7 +30,7 @@ function renderer.new(args)
     return self:clamp(runtime.viewport.dpi or 1, 0.5, 4)
   end
 
-  -- Window-height factor (like ModernZ vidscale=auto), quantized so the layout
+  -- Window-height factor (vidscale), quantized so the layout
   -- is only rebuilt on real changes. shrink only scales down (small/PiP windows).
   function service:window_scale()
     if opts.vidscale == "no" then return 1 end
