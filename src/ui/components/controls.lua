@@ -983,6 +983,7 @@ function controls.new(services)
         local pinned = snapshot.ontop == true
         self.ontop:update({
           icon = pinned and "keep" or "keep_off",
+          icon_color = pinned and config.opts.accent_color or "#FFFFFF",
           tooltip = pinned and "Unpin Window" or "Pin Window"
         })
       end

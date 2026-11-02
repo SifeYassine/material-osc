@@ -34,8 +34,8 @@ end
 
 local definitions = {
   {name = "dpi_scale", default = "auto", group = "appearance"},
-  {name = "vidscale", default = "no", group = "appearance",
-    normalize = enum("no", {"shrink", "yes", "no"})},
+  {name = "vidscale", default = "shrink", group = "appearance",
+    normalize = enum("shrink", {"shrink", "yes", "no"})},
   {name = "vidscale_reference", default = 720, group = "appearance",
     normalize = number({default = 720, min = 100})},
   {name = "vidscale_min", default = 0.35, group = "appearance",
@@ -47,9 +47,9 @@ local definitions = {
   {name = "show_empty_screen", default = true, group = "appearance"},
   {name = "screenshot_button", default = true, group = "appearance"},
   {name = "pip_button", default = true, group = "appearance"},
-  {name = "ontop_button", default = false, group = "appearance"},
-  {name = "info_button", default = false, group = "appearance"},
-  {name = "prev_next_beside_play", default = false, group = "appearance"},
+  {name = "ontop_button", default = true, group = "appearance"},
+  {name = "info_button", default = true, group = "appearance"},
+  {name = "prev_next_beside_play", default = true, group = "appearance"},
   {name = "info_mbtn_left_command",
     default = "script-binding stats/display-page-1-toggle", group = "appearance"},
   {name = "window_controls", default = "auto", group = "appearance",
