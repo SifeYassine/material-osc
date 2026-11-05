@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/65046da7-7d9e-4492-9e93-47650b8fc484
 
 ### This fork
 
-A right-click menu built from `input.conf`, with cascading submenus:
+A right-click menu customized from its own file, with cascading submenus:
 
 ![Context menu](assets/screenshots/context-menu.jpg)
 

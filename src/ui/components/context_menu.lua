@@ -386,9 +386,9 @@ function context_menu.new(services)
   local function measure_level(items)
     local layout = {
       items = items, has_icons = false, max_scroll = 0,
-      padding = dp(8), gap = dp(2),
-      text_size = 19, shortcut_size = 16,
-      icon_size = 21, icon_x = dp(20), end_inset = dp(12)
+      padding = dp(6), gap = 0,
+      text_size = 18, shortcut_size = 15,
+      icon_size = 19, icon_x = dp(18), end_inset = dp(12)
     }
     local widest = 0
     for index, item in ipairs(items) do
@@ -406,13 +406,13 @@ function context_menu.new(services)
         widest = math.max(widest, width)
       end
     end
-    layout.text_inset = dp(layout.has_icons and 42 or 14)
+    layout.text_inset = dp(layout.has_icons and 38 or 14)
     local viewport = services.state.viewport
     layout.viewport_w, layout.viewport_h = viewport.w, viewport.h
     local max_w = math.max(dp(160), viewport.w - dp(16))
     local chrome = layout.padding * 2 + layout.text_inset +
       layout.end_inset + dp(8)
-    layout.w = math.min(max_w, clamp(widest + chrome, dp(200), dp(400)))
+    layout.w = math.min(max_w, clamp(widest + chrome, dp(180), dp(400)))
 
     local rows, separators = 0, 0
     for _, item in ipairs(items) do
@@ -423,7 +423,7 @@ function context_menu.new(services)
     local fixed = layout.padding * 2 + separators * separator_h +
       math.max(0, #items - 1) * layout.gap
     -- shrink rows to fit, then page through whatever still overflows
-    layout.row_h = math.min(dp(36),
+    layout.row_h = math.min(dp(32),
       math.max(dp(28), (available_h - fixed) / math.max(1, rows)))
     local content_h = fixed + rows * layout.row_h
     layout.h = math.min(content_h, available_h)
@@ -554,7 +554,7 @@ function context_menu.new(services)
 
     -- root panel morphs open from the click point
     self.anchors = {}
-    local root_radius = dp(14) + dp(14) * self.morph
+    local root_radius = dp(10) + dp(8) * self.morph
     local shell_opacity = state.open and
       (0.53 + self.morph * 0.39) or self.morph * 0.92
     draw_level(ass, 1, surface, root_radius, shell_opacity, 1)
@@ -596,7 +596,7 @@ function context_menu.new(services)
         w = w,
         h = start_h + (layout.h - start_h) * progress
       })
-      local radius = dp(14) + dp(14) * progress
+      local radius = dp(10) + dp(8) * progress
       local content = clamp((progress - 0.35) / 0.65, 0, 1)
       draw_level(ass, level, rect, radius,
         0.92 * self.content_opacity * clamp(progress * 1.6, 0, 1), content)

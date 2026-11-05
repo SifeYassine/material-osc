@@ -63,7 +63,7 @@ local definitions = {
   {name = "seeking_zone_percentage", default = 15, group = "behavior",
     normalize = number({default = 15, min = 0, max = 50})},
   {name = "seek_step_seconds", default = 5, group = "behavior"},
-  {name = "precise_seek", default = false, group = "behavior"},
+  {name = "precise_seek", default = true, group = "behavior"},
   {name = "precise_seek_span", default = 30, group = "behavior",
     normalize = number({default = 30, min = 1})},
   {name = "precise_seek_step", default = 2, group = "behavior",
