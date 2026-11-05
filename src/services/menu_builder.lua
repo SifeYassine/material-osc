@@ -28,7 +28,7 @@ menu_builder.DEFAULT_CONTENTS = [[
 # #@ tags make an item dynamic:
 #   #@tracks, #@tracks/video, #@tracks/audio, #@tracks/sub,
 #   #@tracks/sub-secondary, #@chapters, #@editions, #@playlist,
-#   #@audio-devices, #@profiles    list those as a submenu
+#   #@audio-devices, #@profiles, #@shaders    list those as a submenu
 #   #@state=<expression>           a Lua expression returning checked, disabled
 #                                  or hidden; names read mpv properties
 #   #@<anything else>              a slot other scripts can fill
@@ -56,7 +56,7 @@ local DYNAMIC_SUBMENUS = {
   ["tracks"] = true, ["tracks/video"] = true, ["tracks/audio"] = true,
   ["tracks/sub"] = true, ["tracks/sub-secondary"] = true,
   ["chapters"] = true, ["editions"] = true, ["playlist"] = true,
-  ["audio-devices"] = true, ["profiles"] = true
+  ["audio-devices"] = true, ["profiles"] = true, ["shaders"] = true
 }
 
 local TRACK_TYPES = {
@@ -74,6 +74,9 @@ local CODEC_NAMES = {
 }
 
 local PROFILE_SKIP = {default = true, encoding = true, libmpv = true}
+
+local SHADER_FOLDER = "~~/shaders"
+local SHADER_EXTENSIONS = {glsl = true, hook = true}
 
 local function trim(value)
   return (tostring(value or ""):match("^%s*(.-)%s*$"))
@@ -102,6 +105,7 @@ function menu_builder.new(args)
   local compiled = {}     -- state expression -> function
   local observed = {}     -- property name -> true
   local dirty = true
+  local shaders_scanned_at = nil  -- when the shaders folder was last listed
   local tree = nil
 
   local function mark_dirty() dirty = true end
@@ -450,6 +454,59 @@ function menu_builder.new(args)
     return items
   end
 
+  -- compares shader paths however they were written (~~/, \ or /, case)
+  local function shader_key(path)
+    local expanded = mp.command_native({"expand-path", tostring(path)}) or tostring(path)
+    expanded = expanded:gsub("\\", "/")
+    if package.config:sub(1, 1) == "\\" then expanded = expanded:lower() end
+    return expanded
+  end
+
+  -- every shader in the shaders folder (checked while active) plus active
+  -- shaders loaded from elsewhere; clicking one toggles it
+  local function shaders()
+    local items, active, listed = {}, {}, {}
+    local loaded = read("glsl-shaders") or {}
+    for _, entry in ipairs(loaded) do active[shader_key(entry)] = entry end
+
+    local folder = mp.command_native({"expand-path", SHADER_FOLDER})
+    local files = folder and utils.readdir(folder, "files") or {}
+    table.sort(files, function(a, b) return a:lower() < b:lower() end)
+    for _, name in ipairs(files) do
+      local stem, extension = name:match("^(.+)%.([^.]+)$")
+      if stem and SHADER_EXTENSIONS[extension:lower()] then
+        local path = SHADER_FOLDER .. "/" .. name
+        local key = shader_key(path)
+        local entry = active[key]
+        listed[key] = true
+        items[#items + 1] = {
+          title = shorten(stem),
+          cmd = entry and ("change-list glsl-shaders remove " .. quote(entry)) or
+            ("change-list glsl-shaders append " .. quote(path)),
+          state = entry and {"checked"} or {}
+        }
+      end
+    end
+    for _, entry in ipairs(loaded) do
+      if not listed[shader_key(entry)] then
+        local _, name = utils.split_path(entry)
+        items[#items + 1] = {
+          title = shorten((name:gsub("%.[^.]+$", ""))),
+          cmd = "change-list glsl-shaders remove " .. quote(entry),
+          state = {"checked"}
+        }
+      end
+    end
+
+    if #items > 0 then items[#items + 1] = {type = "separator"} end
+    items[#items + 1] = {
+      title = "Clear", cmd = 'change-list glsl-shaders clr ""',
+      state = #loaded > 0 and {} or {"disabled"}
+    }
+    shaders_scanned_at = mp.get_time()
+    return items
+  end
+
   local function dynamic_submenu(tag)
     if tag == "tracks" then return all_tracks() end
     local track = TRACK_TYPES[tag]
@@ -459,6 +516,7 @@ function menu_builder.new(args)
     if tag == "playlist" then return playlist() end
     if tag == "audio-devices" then return audio_devices() end
     if tag == "profiles" then return profiles() end
+    if tag == "shaders" then return shaders() end
   end
 
   -- building -----------------------------------------------------------------
@@ -522,6 +580,10 @@ function menu_builder.new(args)
   -- the whole menu, rebuilt only when something it depends on changed
   function service:tree()
     self:start()
+    -- pick up shaders added to (or removed from) the folder while running
+    if shaders_scanned_at and mp.get_time() - shaders_scanned_at > 1 then
+      dirty = true
+    end
     if dirty or not tree then
       dirty = false
       for _, entry in ipairs(tagged) do apply(entry) end
